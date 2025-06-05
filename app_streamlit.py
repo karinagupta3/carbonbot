@@ -67,8 +67,8 @@ st.markdown("""
 
 # --- Load API keys ---
 load_dotenv()
-api_key = os.getenv("MIRIEL_API_KEY")
-project_id = os.getenv("MIRIEL_PROJECT_ID")
+api_key = st.secrets["MIRIEL_API_KEY"]
+project_id = st.secrets["MIRIEL_PROJECT_ID"]
 user_id = 90
 
 miriel = Miriel(api_key=api_key)
