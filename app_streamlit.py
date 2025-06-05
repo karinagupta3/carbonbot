@@ -122,29 +122,33 @@ if should_submit and query:
         wrapped = wrap_query(query)
         response = miriel.query(wrapped, user_id=user_id, num_results=15)
 
-    with st.expander("📦 Full Response (debug)"):
-        st.json(response)
-
-    llm = response.get("results", {}).get("llm_result", "").strip()
-    st.markdown("### 💬 Answer")
-    if llm:
-        st.success(llm)
+    # Defensive check: ensure response is valid before trying to access it
+    if not response or "results" not in response:
+        st.error("❌ Something went wrong. Make sure your API key and project ID are correct.")
     else:
-        st.error("❌ No LLM result found. Try rewording your question.")
+        with st.expander("📦 Full Response (debug)"):
+            st.json(response)
 
-    sources = response.get("results", {}).get("vector_db_results", [])
-    if sources:
-        st.markdown("### 📄 Sources")
-        for src in sources:
-            meta = src.get("metadata", {})
-            source = meta.get("source", "Unknown Source")
-            page = meta.get("page_number", "")
-            st.markdown(f"- {source}" + (f" (page {page})" if page else ""))
+        llm = response.get("results", {}).get("llm_result", "").strip()
+        st.markdown("### 💬 Answer")
+        if llm:
+            st.success(llm)
+        else:
+            st.error("❌ No LLM result found. Try rewording your question.")
+
+        sources = response.get("results", {}).get("vector_db_results", [])
+        if sources:
+            st.markdown("### 📄 Sources")
+            for src in sources:
+                meta = src.get("metadata", {})
+                source = meta.get("source", "Unknown Source")
+                page = meta.get("page_number", "")
+                st.markdown(f"- {source}" + (f" (page {page})" if page else ""))
 
 # --- Suggestions ---
 st.markdown("### 💡 Try one of these:")
 suggestions = [
-    "What is our onboarding process?",
+    "What is our onboarding process for new employees?",
     "Explain our HVAC technology to me like a 5 year old.",
     "How do we plan on reaching $2.5M in revenue?",
 ]
